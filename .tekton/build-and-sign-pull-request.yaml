@@ -488,6 +488,7 @@ spec:
   taskRunTemplate: {}
   workspaces:
   - name: source
+    optional: true
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
