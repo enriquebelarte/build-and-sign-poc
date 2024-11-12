@@ -191,6 +191,25 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
+    - name: build-sign-pack-task
+      runAfter:
+      - clone-repository
+      taskRef:
+        name: build-sign-pack-kernel-module 
+      params:
+        - name: repo_url
+          value: $(params.repo_url)
+        - name: repo_revision
+          value: $(params.repo_revision)
+        - name: tarball_pattern
+          value: $(params.tarball_pattern)
+        - name: kernel_headers_path
+          value: $(params.kernel_headers_path)
+        - name: kms_token
+          value: $(params.kms_token)
+      workspaces:
+        - name: source
+          workspace: source
     - name: build-container
       params:
       - name: IMAGE
@@ -468,6 +487,7 @@ spec:
       optional: true
   taskRunTemplate: {}
   workspaces:
+  - name: source
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'

@@ -1,0 +1,89 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: "kernel, module, build, sign, konflux"
+  name: build-sign-pack-kernel-module
+spec:
+  params:
+    - name: tarballs_repo_url
+      description: "The URL of the Git repository containing the tarballs"
+    - name: kernel_headers_path 
+      description: "Path to the kernel headers or sources needed for building the module"
+    - name: kms_token
+      description: "AWS KMS token to use for signing"
+  workspaces:
+    - name: source
+  steps:
+    - name: clone-repository
+      image: registry.access.redhat.com/ubi9/toolbox 
+      script: |
+        #!/bin/sh
+        set -e
+        repo_url=$(params.tarballs_repo_url)
+        git clone "$repo_url" $(workspaces.source.path)/repo
+
+    - name: extract-latest-tarball
+      image: registry.access.redhat.com/ubi9/toolbox 
+      script: |
+        #!/bin/sh
+        set -e
+        workdir=$(workspaces.source.path)/workdir
+        repo_path=$(workspaces.source.path)/repo
+        mkdir -p "$workdir"
+
+        # Find the latest tarball in the cloned repo
+        latest_tarball=$(ls -v $repo_path/*.tar.gz | tail -n 1)
+        tar -xzf "$latest_tarball" -C "$workdir"
+
+    - name: build-kernel-module
+      image: gcc:latest
+      script: |
+        #!/bin/bash
+        set -e
+        workdir=$(workspaces.source.path)/workdir
+        cd "$workdir"/*
+        make -C $(params.kernel_headers_path) M=$(pwd) modules
+
+    - name: create-self-signed-cert
+      image: registry.access.redhat.com/ubi9/toolbox 
+      env:
+        - name: KMS_TOKEN
+          value: "$(params.KMS_TOKEN)"
+      script: |
+        #!/bin/bash
+        set -e
+        # Generate a self-signed certificate using AWS KMS with OpenSSL PKCS#11
+        openssl req -config /etc/aws-kms-pkcs11/x509.genkey \
+          -x509 \
+          -key "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$KMS_TOKEN" \
+          -keyform engine -engine pkcs11 \
+          -out /etc/aws-kms-pkcs11/mycert.pem -days 36500
+
+    - name: sign-kernel-module
+      image: registry.access.redhat.com/ubi9/toolbox 
+      script: |
+        #!/bin/bash
+        set -e
+        dnf -y install kernel-devel
+
+        cp -p $(find /usr/src/kernels/ -name sign-file | tail -n1) /usr/local/bin/
+        workdir=$(workspaces.source.path)/workdir
+        module=$(find "$workdir" -name "*.ko" | head -n 1)
+        signed_module="${module%.ko}-signed.ko"
+        cert_path="/etc/aws-kms-pkcs11/mycert.pem"
+        
+        # Sign the kernel module using sign-file and the generated certificate
+        sign-file sha256 "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$KMS_TOKEN" "$cert_path" "$module" "$signed_module"
+
+    - name: pack-modules
+      image: registry.access.redhat.com/ubi9/toolbox
+      script: |
+        #!/bin/sh
+        set -e
+        workdir=$(workspaces.source.path)/workdir
+        tar czf $(workspaces.source.path)/mymodule-output.tar.gz -C "$workdir" $(basename $module) $(basename $signed_module)
+    
