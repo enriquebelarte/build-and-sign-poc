@@ -492,6 +492,7 @@ spec:
   taskRunTemplate: {}
   workspaces:
   - name: source
+    emptyDir: {}
     optional: true
   - name: git-auth
     secret:
