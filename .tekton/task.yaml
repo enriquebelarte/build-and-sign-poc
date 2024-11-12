@@ -52,7 +52,7 @@ spec:
       image: registry.access.redhat.com/ubi9/toolbox 
       env:
         - name: KMS_TOKEN
-          value: "$(params.KMS_TOKEN)"
+          value: "$(params.kms_token)"
       script: |
         #!/bin/bash
         set -e
