@@ -197,6 +197,10 @@ spec:
       taskRef:
         name: build-sign-pack-kernel-module 
       params:
+        - name: name
+          value: build-sign-pack-kernel-module
+        - name: pathInRepo
+          value: .tekton/task.yaml
         - name: repo_url
           value: $(params.repo_url)
         - name: repo_revision
