@@ -1,4 +1,4 @@
-ARG DRIVER_REPO
+ARG DRIVER_REPO="https://github.com/enriquebelarte/silly-kmod.git"
 ARG DTK_IMAGE
 ARG DRIVER_IMAGE
 
