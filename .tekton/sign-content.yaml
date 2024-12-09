@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sign-content 
+spec:
+  steps:
+    - name: list-container-contents 
+      image: registry.access.redhat.com/ubi9/ubi-micro@sha256:2891f3fe3220cf18bd29daf8718a7bb338fd6072019934ff1061b94b1bdedd44
+      script: |
+        echo "MICRO UBI, here : "
+        ls -l /workspace/
+
