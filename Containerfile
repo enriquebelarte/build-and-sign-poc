@@ -11,4 +11,4 @@ RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
 FROM ${DRIVER_IMAGE}
 USER root
 COPY --from=dtk /home/builder /opt/drivers/
-
+COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file /usr/local/bin/sign-file
