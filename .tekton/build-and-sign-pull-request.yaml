@@ -236,6 +236,8 @@ spec:
         - "true"
     - name: sign-content
       params:
+      - name: name
+        value: sign-content
       - name: IMAGE
         value: $(params.output-image)
       runAfter:
