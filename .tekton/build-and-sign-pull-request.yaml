@@ -243,9 +243,14 @@ spec:
       runAfter:
       - build-container
       taskRef:
+        resolver: git
         params:
-        - name: sign-content
-          value: sign-content.yaml          
+          - name: url
+            value: https://github.com/enriquebelarte/build-and-sign.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: .tekton/sign-content.yaml            
     - name: build-image-index
       params:
       - name: IMAGE
