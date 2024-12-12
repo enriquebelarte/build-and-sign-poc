@@ -218,8 +218,6 @@ spec:
         value: "SYS_ADMIN"
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
-      - name: ADDITIONAL_SECRET
-        value: $(params.additional-build-secret)
       - name: SQUASH
         value: $(params.squash-build)
       - name: SOURCE_ARTIFACT
