@@ -17,7 +17,7 @@ RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/data \
     export_env_file=$(mktemp) && \
     yq '.data | to_entries | .[] | "\(.key)=\(.value)"' /run/secrets/my-aws-auth-secret > $export_env_file && \
     source $export_env_file && \
-    echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"	    
+    echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"	&& \
     echo "KMS=${AWS_KMS_TOKEN}" 
 RUN /bin/configure_pkcs.sh
 RUN find /opt/drivers -name "*.ko" -exec sign-file {} \;
