@@ -212,12 +212,20 @@ spec:
       - name: BUILD_ARGS
         value:
         - $(params.build-args[*])
+      - name: PLATFORM
+        value: linux-root/amd64
+      - name: ADD_CAPABILITIES
+        value: "SYS_ADMIN"
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
+      - name: ADDITIONAL_SECRET
+        value: $(params.additional-build-secret)
+      - name: SQUASH
+        value: $(params.squash-build)
       - name: SOURCE_ARTIFACT
         value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
       - name: CACHI2_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
+        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)          
       runAfter:
       - prefetch-dependencies
       taskRef:
