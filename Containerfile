@@ -13,12 +13,7 @@ FROM ${SIGNER_SDK_IMAGE} as signer
 USER root
 COPY --from=dtk /home/builder /opt/drivers/
 COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file /usr/local/bin/sign-file
-RUN --mount=type=secret,id=my-aws-auth-secret/data \
-    export_env_file=$(mktemp) && \
-    ls -l /run/secrets/ && \
-    #yq '.data | to_entries | .[] | "\(.key)=\(.value)"' /run/secrets/my-aws-auth-secret/data > $export_env_file && \
-    source $export_env_file && \
-    echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"	&& \
+RUN echo "AWS_ACCESS_KEY_ID=$(cat /run/secrets/my-aws-auth-secret/AWS_KMS_TOKEN)" && \
     echo "KMS=${AWS_KMS_TOKEN}" 
 RUN /bin/configure_pkcs.sh
 RUN find /opt/drivers -name "*.ko" -exec sign-file {} \;
