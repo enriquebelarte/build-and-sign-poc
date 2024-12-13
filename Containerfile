@@ -8,6 +8,7 @@ WORKDIR /home/builder
 COPY --chmod=0755 build-commands.sh /home/builder/build-commands.sh
 RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
+RUN ls -l /run/secrets/my-aws-auth-secret/AWS_KMS_TOKEN
 
 FROM ${SIGNER_SDK_IMAGE} as signer
 ARG AWS_AUTH_SECRET
