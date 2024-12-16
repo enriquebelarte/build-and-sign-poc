@@ -1,7 +1,6 @@
 ARG DTK_IMAGE
 ARG SIGNER_SDK_IMAGE
 ARG DRIVER_IMAGE
-ARG AWS_AUTH_SECRET 
 FROM ${DTK_IMAGE} as dtk
 ARG DRIVER_REPO
 WORKDIR /home/builder
@@ -10,6 +9,7 @@ RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
 
 FROM ${SIGNER_SDK_IMAGE} as signer
+ARG AWS_AUTH_SECRET
 USER root
 COPY --from=dtk /home/builder /opt/drivers/
 COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file /usr/local/bin/sign-file
