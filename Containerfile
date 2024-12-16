@@ -19,6 +19,7 @@ RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID echo "AWS_ACCESS
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY echo "AWS_SECRET_ACCESS_KEY="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY) >> /tmp/envfile
 #RUN echo "envfile: "$(cat /tmp/envfile)
 RUN source /tmp/envfile && \
+    echo "My Token:" $AWS_KMS_TOKEN && \
 	   /bin/configure_pkcs.sh
 RUN find /opt/drivers -name "*.ko" -exec sign-file {} \;
 FROM ${DRIVER_IMAGE}
