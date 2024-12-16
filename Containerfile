@@ -9,7 +9,8 @@ WORKDIR /home/builder
 COPY --chmod=0755 build-commands.sh /home/builder/build-commands.sh
 RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
-RUN ls -l /run/secrets
+RUN --mount=type=secret,id=${AWS_AUTH_SECRET} \
+    ls -l /run/secrets
 
 FROM ${SIGNER_SDK_IMAGE} as signer
 ARG AWS_AUTH_SECRET
