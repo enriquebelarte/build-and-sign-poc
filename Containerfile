@@ -8,7 +8,7 @@ WORKDIR /home/builder
 COPY --chmod=0755 build-commands.sh /home/builder/build-commands.sh
 RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
-RUN --mount=type=secret,id=my-aws-auth-secret \
+RUN --mount=type=secret,id=my-aws-auth-secret/AWS_KMS_TOKEN \
     ls -l /run/secrets 	 
     
 
