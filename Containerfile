@@ -8,17 +8,16 @@ WORKDIR /home/builder
 COPY --chmod=0755 build-commands.sh /home/builder/build-commands.sh
 RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
-RUN --mount=type=secret,id=my-aws-auth-secret/AWS_KMS_TOKEN \
-    cat /run/secrets/my-aws-auth-secret/AWS_KMS_TOKEN
-    
-
 
 FROM ${SIGNER_SDK_IMAGE} as signer
 USER root
 COPY --from=dtk /home/builder /opt/drivers/
 COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file /usr/local/bin/sign-file
-RUN echo "KMS=${AWS_KMS_TOKEN}" 
-RUN /bin/configure_pkcs.sh
+RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_KMS_TOKEN export AWS_KMS_TOKEN=$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_KMS_TOKEN) && \
+    --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID export AWS_ACCESS_KEY_ID=$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID) && \
+ \ --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY export AWS_SECRET_ACCESS_KEY=$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY) && \
+    echo "KMS = $AWS_KMS_TOKEN" && \
+    /bin/configure_pkcs.sh
 RUN find /opt/drivers -name "*.ko" -exec sign-file {} \;
 FROM ${DRIVER_IMAGE}
 COPY --from=signer /opt/drivers /opt/drivers
