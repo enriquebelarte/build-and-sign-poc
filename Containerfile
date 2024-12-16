@@ -1,6 +1,7 @@
 ARG DTK_IMAGE
 ARG SIGNER_SDK_IMAGE
 ARG DRIVER_IMAGE
+ARG AWS_AUTH_SECRET
 
 FROM ${DTK_IMAGE} as dtk
 ARG DRIVER_REPO
@@ -8,7 +9,7 @@ WORKDIR /home/builder
 COPY --chmod=0755 build-commands.sh /home/builder/build-commands.sh
 RUN git clone $DRIVER_REPO && cd $(basename $DRIVER_REPO .git) && \
     /home/builder/build-commands.sh
-RUN ls -l /run/secrets/my-aws-auth-secret/AWS_KMS_TOKEN
+RUN ls -l /run/secrets/my-aws-auth-secret
 
 FROM ${SIGNER_SDK_IMAGE} as signer
 ARG AWS_AUTH_SECRET
