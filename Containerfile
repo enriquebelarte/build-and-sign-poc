@@ -26,8 +26,8 @@ RUN export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     aws kms list-keys && \
     env && \
     sed  -i '1i openssl_conf = openssl_init' /etc/pki/tls/openssl.cnf  && \
-    cat /etc/aws-kms-pkcs11/openssl-pkcs11.conf >> /etc/pki/tls/openssl.cnf
-RUN echo "TOKEN is: $AWS_KMS_TOKEN"
+    cat /etc/aws-kms-pkcs11/openssl-pkcs11.conf >> /etc/pki/tls/openssl.cnf && \
+    echo "TOKEN is: $AWS_KMS_TOKEN"
 COPY <<eof /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
