@@ -25,10 +25,7 @@ RUN source /tmp/envfile && \
     export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
     export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
-    export AWS_KMS_TOKEN=${AWS_KMS_TOKEN} 
-
-RUN echo "TOKEN is: $AWS_KMS_TOKEN"
-COPY <<eof /etc/aws-kms-pkcs11/config.json
+    cat <<eof /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
     {
