@@ -28,7 +28,7 @@ RUN export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     sed  -i '1i openssl_conf = openssl_init' /etc/pki/tls/openssl.cnf  && \
     cat /etc/aws-kms-pkcs11/openssl-pkcs11.conf >> /etc/pki/tls/openssl.cnf && \
     sed -i "s/MY_KMS_ID/$AWS_KMS_KEY_ID/g" /etc/aws-kms-pkcs11/config.json && \
-    cat /etc/pki/tls/openssl.cnf && \
+    cat /etc/aws-kms-pkcs11/config.json && \
     openssl engine -t -c && \
     openssl req -config /etc/aws-kms-pkcs11/x509.genkey -x509 -key "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" -keyform engine -engine pkcs11 -out /etc/aws-kms-pkcs11/cert.pem -days 36500 
     #bash -x /bin/enable_kms_pkcs11 && \
