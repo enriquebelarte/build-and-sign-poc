@@ -26,6 +26,7 @@ RUN source /tmp/envfile && \
     export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
     export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
     rm -f /etc/aws-kms-pkcs11/config.json && \
+    touch /etc/aws-kms-pkcs11/config.json && \
     cat <<EOF /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
