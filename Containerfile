@@ -20,8 +20,9 @@ RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_KMS_TOKEN echo "AWS_KMS_TOKEN=
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID echo "AWS_ACCESS_KEY_ID="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID) >> /tmp/envfile
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY echo "AWS_SECRET_ACCESS_KEY="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY) >> /tmp/envfile
 RUN export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
-    export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL}
-RUN source /tmp/envfile && \
+    export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
+    source /tmp/envfile && \
+    env && \
     echo "Token:" $AWS_KMS_TOKEN" Label: $AWS_KMS_KEY_LABEL" && \
 	   /bin/enable_kms_pkcs11
 RUN find /opt/drivers -name "*.ko" -exec sign-file {} \;
