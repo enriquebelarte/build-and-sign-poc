@@ -26,13 +26,15 @@ RUN export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
     echo "Token:" $AWS_KMS_TOKEN" Label: $AWS_KMS_KEY_LABEL" && \
 	   /bin/enable_kms_pkcs11
 RUN oot_modules="/opt/drivers/" && \
-    find "$oot_modules" -type f -name "*.ko" | while IFS= read -r file; do \
-        signedfile="${oot_modules}$(basename "${file%.*}")-signed.ko"; \
-        sign-file sha256 \
-            "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" \
-            /etc/aws-kms-pkcs11/cert.pem \
-            "$file" \
-            "$signedfile"; \
-    done	   
+    sign-file sha256 "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" /etc/aws-kms-pkcs11/cert.pem \
+    /opt/drivers/silly.ko /opt/drivers/silly-signed.ko
+#    find "$oot_modules" -type f -name "*.ko" | while IFS= read -r file; do \
+#        signedfile="${oot_modules}$(basename "${file%.*}")-signed.ko"; \
+#        sign-file sha256 \
+#            "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" \
+#            /etc/aws-kms-pkcs11/cert.pem \
+#            "$file" \
+#            "$signedfile"; \
+#    done	   
 FROM ${DRIVER_IMAGE}
 COPY --from=signer /opt/drivers /opt/drivers
