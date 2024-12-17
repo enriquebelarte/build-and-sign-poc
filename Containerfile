@@ -19,15 +19,15 @@ COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file 
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_KMS_TOKEN echo "export AWS_KMS_TOKEN="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_KMS_TOKEN) >> /tmp/envfile 
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID echo "export AWS_ACCESS_KEY_ID="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_ACCESS_KEY_ID) >> /tmp/envfile
 RUN --mount=type=secret,id=${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY echo "export AWS_SECRET_ACCESS_KEY="$(cat /run/secrets/${AWS_AUTH_SECRET}/AWS_SECRET_ACCESS_KEY) >> /tmp/envfile
-RUN export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \ 
-    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
-    export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
-    source /tmp/envfile && \
-    aws kms list-keys && \
-    env && \
+RUN source /tmp/envfile && \
     sed  -i '1i openssl_conf = openssl_init' /etc/pki/tls/openssl.cnf  && \
     cat /etc/aws-kms-pkcs11/openssl-pkcs11.conf >> /etc/pki/tls/openssl.cnf && \
-    echo "TOKEN is: $AWS_KMS_TOKEN"
+    export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
+    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
+    export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
+    export AWS_KMS_TOKEN=${AWS_KMS_TOKEN} 
+
+RUN echo "TOKEN is: $AWS_KMS_TOKEN"
 COPY <<eof /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
