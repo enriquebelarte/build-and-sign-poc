@@ -25,7 +25,8 @@ RUN source /tmp/envfile && \
     export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
     export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
-    cat <<eof /etc/aws-kms-pkcs11/config.json
+    rm -f /etc/aws-kms-pkcs11/config.json && \
+    cat <<EOF /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
     {
@@ -36,7 +37,7 @@ RUN source /tmp/envfile && \
      }
            ]
 }
-eof
+EOF
 RUN cat /etc/aws-kms-pkcs11/config.json && \
     openssl engine -t -c && \
     openssl req -config /etc/aws-kms-pkcs11/x509.genkey -x509 -key "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" -keyform engine -engine pkcs11 -out /etc/aws-kms-pkcs11/cert.pem -days 36500 
