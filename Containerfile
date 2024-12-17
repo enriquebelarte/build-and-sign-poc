@@ -26,8 +26,8 @@ ENV AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
 RUN source /tmp/envfile && \
     sed  -i '1i openssl_conf = openssl_init' /etc/pki/tls/openssl.cnf  && \
     cat /etc/aws-kms-pkcs11/openssl-pkcs11.conf >> /etc/pki/tls/openssl.cnf && \
-    export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so
-RUN cat <<EOF > /etc/aws-kms-pkcs11/config.json
+    export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \ 
+    cat <<EOF > /etc/aws-kms-pkcs11/config.json
 {
   "slots": [
     {
