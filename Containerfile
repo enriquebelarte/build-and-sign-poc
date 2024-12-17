@@ -23,6 +23,7 @@ RUN export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} && \
     export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL} && \
     source /tmp/envfile && \
+    openssl engine -t -c && \
     aws kms list-keys && \
     env && \
     /bin/enable_kms_pkcs11 && \
