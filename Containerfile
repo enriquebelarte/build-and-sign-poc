@@ -40,6 +40,7 @@ RUN source /tmp/envfile && \
 EOF
 RUN cat /etc/aws-kms-pkcs11/config.json && \
     export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
+    echo "KMS Label = $AWS_KMS_KEY_LABEL" && \
     openssl engine -t -c && \
     openssl req -config /etc/aws-kms-pkcs11/x509.genkey -x509 -key "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" -keyform engine -engine pkcs11 -out /etc/aws-kms-pkcs11/cert.pem -days 36500 
     #bash -x /bin/enable_kms_pkcs11 && \
