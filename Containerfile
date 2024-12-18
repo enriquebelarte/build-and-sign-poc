@@ -39,6 +39,7 @@ RUN source /tmp/envfile && \
 }
 EOF
 RUN cat /etc/aws-kms-pkcs11/config.json && \
+    source /tmp/envfile && \
     export PKCS11_MODULE_PATH=/usr/lib64/pkcs11/aws_kms_pkcs11.so && \
     echo "KMS Label = $AWS_KMS_KEY_LABEL" && \
     echo "KMS ID = $AWS_KMS_TOKEN" && \
