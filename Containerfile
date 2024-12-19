@@ -37,6 +37,7 @@ RUN source /tmp/envfile && \
            ]
 }
 EOF
+RUN cat /etc/aws-kms-pkcs11/config.json
 RUN source /tmp/envfile && \
     bash -x /bin/enable_kms_pkcs11 && \
     oot_modules="/opt/drivers/" && \
