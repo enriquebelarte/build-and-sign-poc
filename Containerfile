@@ -13,7 +13,6 @@ FROM ${SIGNER_SDK_IMAGE} as signer
 ARG AWS_AUTH_SECRET
 ARG AWS_DEFAULT_REGION
 ARG AWS_KMS_KEY_LABEL
-ARG AWS_KMS_TOKEN
 USER root
 COPY --from=dtk /home/builder /opt/drivers/
 COPY --from=dtk /usr/src/kernels/5.14.0-503.15.1.el9_5.x86_64/scripts/sign-file /usr/local/bin/sign-file
@@ -39,7 +38,7 @@ RUN echo "export AWS_KMS_KEY_LABEL=${AWS_KMS_KEY_LABEL}" >> /tmp/envfile && \
 }
 EOF
 RUN source /tmp/envfile && \
-    echo "DEBUG: $(cat /etc/pki/tls/openssl.cnf && cat /tmp/envfile)" && \
+    echo "DEBUG: $(cat /etc/aws-kms-pkcs11/config.json)" && \
     AWS_KMS_PKCS11_DEBUG=1 openssl req -config /etc/aws-kms-pkcs11/x509.genkey -x509 -key "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" -keyform engine -engine pkcs11 -out /etc/aws-kms-pkcs11/cert.pem -days 36500 && \
     oot_modules="/opt/drivers/" && \
     find "$oot_modules" -type f -name "*.ko" | while IFS= read -r file; do \
