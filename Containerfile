@@ -51,7 +51,7 @@ RUN source /tmp/envfile && \
             "pkcs11:model=0;manufacturer=aws_kms;serial=0;token=$AWS_KMS_KEY_LABEL" \
             /etc/aws-kms-pkcs11/cert.pem \
             "$file" \
-            "$oot_modules$signedfile"; \
+            "$signedfile"; \
     done	   
 FROM ${DRIVER_IMAGE}
 COPY --from=signer /opt/drivers /opt/drivers
