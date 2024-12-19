@@ -37,9 +37,7 @@ RUN source /tmp/envfile && \
            ]
 }
 EOF
-RUN cat /etc/aws-kms-pkcs11/config.json
 RUN source /tmp/envfile && \
-    env && \
     bash -x /bin/enable_kms_pkcs11 && \
     oot_modules="/opt/drivers/" && \
     find "$oot_modules" -type f -name "*.ko" | while IFS= read -r file; do \
