@@ -26,43 +26,6 @@ spec:
     value: quay.io/redhat-user-workloads/ebelarte-tenant/build-and-sign-poc:on-pr-{{revision}}
   - name: image-expires-after
     value: 5d
-apiVersion: tekton.dev/v1
-kind: PipelineRun
-metadata:
-  annotations:
-    build.appstudio.openshift.io/repo: https://github.com/enriquebelarte/build-and-sign-poc?rev={{revision}}
-    build.appstudio.redhat.com/commit_sha: '{{revision}}'
-    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
-    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
-    pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
-      == "main"
-  creationTimestamp: null
-  labels:
-    appstudio.openshift.io/application: build-and-sign-poc
-    appstudio.openshift.io/component: build-and-sign-poc
-    pipelines.appstudio.openshift.io/type: build
-  name: build-and-sign-poc-on-pull-request
-  namespace: ebelarte-tenant
-spec:
-  params:
-  - name: git-url
-    value: '{{source_url}}'
-  - name: revision
-    value: '{{revision}}'
-  - name: output-image
-    value: quay.io/redhat-user-workloads/ebelarte-tenant/build-and-sign-poc:on-pr-{{revision}}
-  - name: image-expires-after
-    value: 5d
-  pipelineRef:
-    resolver: git
-      params:
-        - name: url
-          value: https://github.com/enriquebelarte/build-and-sign-poc
-        - name: revision
-          value: main
-        - name: pathInRepo
-          value: .tekton/custom-build-and-sign.yaml
    workspaces:
    - name: git-auth
      optional: true
