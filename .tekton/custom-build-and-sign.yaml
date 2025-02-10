@@ -1,0 +1,106 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-sign-pipeline
+spec:
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: https://github.com/NVIDIA/open-gpu-kernel-modules.git 
+        - name: revision
+          value: 545.23
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    - name: build-source
+      taskRef:
+        name: build-task
+      runAfter:
+        - clone-repo
+      params:
+        - name: build-image
+          value: quay.io/build-and-sign/pa-driver-toolkit:5.14.0-503.19.1.el9_5.x86_64
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    - name: sign-files
+      taskRef:
+        name: sign-task
+      runAfter:
+        - build-source
+      params:
+        - name: sign-image
+          value: quay.io/redhat-user-workloads/partners-kmod-accel-tenant/klerk:75ad7b90c81b5056b69ff5407a3a2e218d4bbdbc
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+  workspaces:
+    - name: shared-workspace
+      description: Workspace shared between tasks
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+spec:
+  params:
+    - name: url
+      type: string
+    - name: revision
+      type: string
+      default: main
+  workspaces:
+    - name: output
+      description: The workspace where files will be checked out
+  steps:
+    - name: clone
+      image: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.1
+      script: |
+        git clone $(params.url) -b $(params.revision) .
+      workingDir: $(workspaces.output.path)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-task
+spec:
+  params:
+    - name: build-image
+      type: string
+  workspaces:
+    - name: source
+      description: The workspace containing the source code
+  steps:
+    - name: build
+      image: $(params.build-image)
+      script: |
+        make modules -j$(nproc) SYSSRC=/usr/src/kernels/5.14.0-503.19.1.el9_5.x86_64
+      workingDir: $(workspaces.source.path)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sign-task
+spec:
+  params:
+    - name: sign-image
+      type: string
+  workspaces:
+    - name: source
+      description: The workspace containing the .ko files
+  steps:
+    - name: sign
+      image: $(params.sign-image)
+      script: |
+        sign-file *.ko
+      workingDir: $(workspaces.source.path)
+
