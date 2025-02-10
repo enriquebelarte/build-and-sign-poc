@@ -35,7 +35,7 @@ spec:
         value: main
       - name: pathInRepo
         value: .tekton/custom-build-and-sign.yaml
- workspaces:
- - name: git-auth
-   secret:
-     secretName: '{{ git_auth_secret }}'    
+  workspaces:
+  - name: git-auth
+    secret:
+      secretName: '{{ git_auth_secret }}'    
