@@ -14,6 +14,8 @@ spec:
           value: 545.23
         - name: name
           value: git-clone
+        - name: kind
+          value: task
       workspaces:
         - name: output
           workspace: shared-workspace
