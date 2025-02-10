@@ -28,19 +28,13 @@ spec:
     value: 5d
   pipelineRef:
     resolver: git
-      params:
-        - name: url
-          value: https://github.com/enriquebelarte/build-and-sign-poc
-        - name: revision
-          value: main
-        - name: pathInRepo
-          value: .tekton/custom-build-and-sign.yaml
-   workspaces:
-   - name: git-auth
-     optional: true
-   - name: netrc
-     optional: true
- taskRunTemplate: {}
+    params:
+      - name: url
+        value: https://github.com/enriquebelarte/build-and-sign-poc
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: .tekton/custom-build-and-sign.yaml
  workspaces:
  - name: git-auth
    secret:
