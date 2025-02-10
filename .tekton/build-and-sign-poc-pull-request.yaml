@@ -26,11 +26,6 @@ spec:
     value: quay.io/redhat-user-workloads/ebelarte-tenant/build-and-sign-poc:on-pr-{{revision}}
   - name: image-expires-after
     value: 5d
-   workspaces:
-   - name: git-auth
-     optional: true
-   - name: netrc
-     optional: true
  taskRunTemplate: {}
  workspaces:
  - name: git-auth
