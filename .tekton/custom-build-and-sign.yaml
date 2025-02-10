@@ -4,7 +4,7 @@ metadata:
   name: build-and-sign-pipeline
 spec:
   tasks:
-    - name: clone-repo
+    - name: git-clone 
       taskRef:
         name: git-clone
       params:
@@ -12,6 +12,10 @@ spec:
           value: https://github.com/NVIDIA/open-gpu-kernel-modules.git 
         - name: revision
           value: 545.23
+        - name: name
+          value: git-clone
+        - name: kind
+          value: task
       workspaces:
         - name: output
           workspace: shared-workspace
