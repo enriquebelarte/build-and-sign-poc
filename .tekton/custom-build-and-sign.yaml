@@ -4,7 +4,7 @@ metadata:
   name: build-and-sign-pipeline
 spec:
   tasks:
-    - name: clone-repo
+    - name: git-clone 
       taskRef:
         name: git-clone
       params:
